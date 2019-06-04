@@ -14,8 +14,11 @@
 
 import nltk
 from nltk.chunk.util import conlltags2tree, tree2conlltags
+import os
 
-nltk.download('conll2002')
+# Check if conll2002 is already downloaded
+if "conll2002" not in os.listdir(nltk.data.find("corpora")):
+    nltk.download('conll2002')
 
 # If numpy is absent, the nltk fails with a very confusing error.
 # We avoid problems by checking directly
@@ -78,7 +81,11 @@ class _ConsecutiveNPChunkTagger(nltk.TaggerI):
                 featureset = self._featuremap(untagged_sent, i, history)
                 train_set.append( (featureset, tag) )
                 history.append(tag)
-        self.classifier = nltk.MaxentClassifier.train(
+
+        if algorithm == "NaiveBayes":
+            self.classifier = nltk.NaiveBayesClassifier.train(train_set)
+        else:
+            self.classifier = nltk.MaxentClassifier.train(
             train_set, algorithm=algorithm, trace=0)
 
     def tag(self, sentence):
