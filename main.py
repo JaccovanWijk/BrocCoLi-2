@@ -47,7 +47,7 @@ def main(algorithm="IIS", train_sample_size=0, test_all_features=False):
 
     for feature in all_features:
         print("---------------------------------------------------------")
-        print("Training on", len(training), "samples, using", feature[0])
+        print("Training on", len(training), "samples, using", feature[0], " on algorithm", algorithm)
         model = ConsecutiveNPChunker(feature[1], training, algorithm=algorithm)
 
         print("Evaluating on", len(testing),"samples...")
@@ -135,27 +135,31 @@ def parse_input():
 
             # Throw an exception if the user doesn't specify a valid training size after passing the flag
             try:
-                tss = int(sys.argv[i + 1])
+                tss = sys.argv[i + 1]
             except IndexError:
                 raise IndexError("Please specify a training size after passing the " + flag + " flag.")
+
+            try:
+                tss = int(tss)
             except ValueError:
                 raise ValueError(tss, "is not an integer. Only integers can be used as a training size.")
 
             # Notify the user of an negative training size
             if tss < 0:
                 print("You tried to specify a negative training size.",
-                      "That doesn't make the training any faster, you know",
+                      "That doesn't make the training any faster, you know.",
                       "We will use the full train sample set instead.")
                 tss = 0
 
         elif flag == "-taf" or flag == "-test_all_features":
             taf = True
 
-    main()
+    main(algorithm=alg, train_sample_size=tss, test_all_features=taf)
+
 
 if __name__ == "__main__":
 
-    # If the user does not specify any arguments, they probable need some help.
+    # If the user does not specify any arguments, they probably need some help.
     if len(sys.argv) <= 1:
         print("Oops! You did not specify any arguments. See the help below for more info.")
         help(main)
