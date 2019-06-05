@@ -1,10 +1,12 @@
-from pickle import dump, load, Pickler
+from pickle import dump
 from nltk.corpus import conll2002 as conll
 import features
 from inspect import getmembers, isfunction
 import time
 import os
+import sys
 from custom_chunker import ConsecutiveNPChunker
+from InputParser import parse_input
 
 
 def pickle_model(model, folder="pickles"):
@@ -18,7 +20,8 @@ def pickle_model(model, folder="pickles"):
 
     # If there is a pickle-folder, make sure old pickle are not overwritten
     else:
-        old_pickles = sorted(os.listdir(path="./" + folder), reverse=True)
+        # Get all pickles already the folder and sort them. That way, we know which name to pick next
+        old_pickles = [x for x in sorted(os.listdir(path="./" + folder), reverse=True) if x.endswith(".pickle")]
         if len(old_pickles) != 0:
             last = str(int(old_pickles[0].split(".")[0]) + 1)
 
@@ -35,7 +38,7 @@ def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, t
     train_data -- The data set to train the model with (Default = The ned.train data set from the nltk conll2002 corpus)
     tss -- The train sample size to use (Default = 0, which means the whole data set)
     taf -- Whether to train every feature (Default = False)
-    folder -- Which folder to save the pickled model(s) in
+    folder -- Which folder to save the pickled model(s) in (Default = "pickles")
     """
 
     # Save all models in a list, if the user wants to evaluate without needing to unpickle
@@ -46,7 +49,7 @@ def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, t
         train_data = conll.chunked_sents("ned.train")[:tss]
 
     all_features = getmembers(features, isfunction)  # Get all feature functions from module features
-    all_features = sorted(all_features, key=lambda y: y[0])  # Sort them so the oldest feature comes first
+    all_features = sorted(all_features, key=lambda y: y[0])  # Sort them by name so the oldest feature comes first
 
     # If we only want to test the newest feature, create a list with only that feature method in it
     if not taf:
@@ -56,13 +59,13 @@ def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, t
     print("--------------------START TRAINING-----------------------")
 
     # Loop trough all features we want to check
-    for feature in all_features:
+    for feature_name, feature_function in all_features:
 
         # Train the model and inform the user on start time
-        print("Training on", len(train_data), "samples, using", feature[0], " on algorithm", alg)
+        print("Training on", len(train_data), "samples, using", feature_name, " on algorithm", alg)
         start_time = time.time()
         print("Training start time:", time.asctime(time.localtime(start_time)))
-        model = ConsecutiveNPChunker(feature[1], train_data, algorithm=alg)
+        model = ConsecutiveNPChunker(feature_function, train_data, algorithm=alg)
         models.append(model)
 
         # Inform the user on the elapsed and end times
@@ -73,3 +76,13 @@ def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, t
         pickle_model(model=model, folder=folder)
 
     return models
+
+
+if __name__ == "__main__":
+
+    if sys.argv[1] == "-h" or sys.argv[1] == "-help":
+        help(train_model)
+
+    elif len(sys.argv) > 1:
+        args = parse_input()
+        train_model(alg=args['alg'], tss=args['tss'], taf=args['taf'])

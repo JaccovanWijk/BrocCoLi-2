@@ -23,6 +23,7 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
 
     print(score.missed())
 
+
 def evaluate_pickle(path):
     """ Unpickle a model to evaluate, given a path to the pickled model
 
@@ -41,6 +42,7 @@ def evaluate_all_pickles(path="./pickles"):
 
     Keyword arguments:
     path -- The absolute or relative to the folder containing the pickled models. (Default: "./pickles")
+    Use the flag -p or -path when running this module as the main module to specify a path
     """
 
     # Check if the specified path exists at all
@@ -90,3 +92,7 @@ if __name__ == "__main__":
 
         # Evaluate all pickles next
         evaluate_all_pickles(path=path)
+
+    # If the user wants help
+    elif sys.argv[1] == "-h" or sys.argv[1] == "-help":
+        help(evaluate_all_pickles)
