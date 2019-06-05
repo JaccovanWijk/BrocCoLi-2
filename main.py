@@ -1,17 +1,13 @@
-from custom_chunker import ConsecutiveNPChunker
-from nltk.corpus import conll2002 as conll
 import nltk
-import features
 import BuildModels as Bm
 import EvaluateModels as Em
 import sys
-from inspect import getmembers, isfunction
 
 
 def main(algorithm="IIS", train_sample_size=0, test_all_features=False):
     """" The main method for using the NER-tagger.
-    This method trains a model, tests it and pickles the result.
-    This method also prints evaluation scores.
+    This method trains, pickles and evaluates the models, skipping the unpickling part for efficiency
+    This method is faster and easier than using EvaluateModels and BuildModels, but has less options
 
     Keyword arguments:
 
@@ -23,82 +19,17 @@ def main(algorithm="IIS", train_sample_size=0, test_all_features=False):
     To set this, use flag -tss or -train_sample_size in the command line
 
     test_all_features -- Boolean, whether to test all features after each other on alphabetical order.
-    This argument can be usefull when implementing multiple new features in between testing to visualize improvement.
+    This argument can be useful when implementing multiple new features in between testing to visualize improvement.
     If set to False, will force the NER-tagger to train on the most recent feature instead of all.
     To set this, ust flag -taf or -test_all_features in the command line.
     """
 
-    # Set the training and testing samples
-    training = conll.chunked_sents("ned.train")
-    testing = conll.chunked_sents("ned.testa")
+    # Train model(s) and pickle them.
+    models = Bm.train_model(alg=algorithm, tss=train_sample_size, taf=test_all_features)
 
-    # Resize the testing size if necessary
-    if 0 < train_sample_size < len(training):
-        training = conll.chunked_sents("ned.train")[:train_sample_size]
+    # Evaluate the models
+    Em.evaluated_models(models=models)
 
-    best = 0
-
-    all_features = getmembers(features, isfunction)  # Get all feature functions from module features
-    all_features = sorted(all_features, key=lambda y: y[0])  # Sort them so the oldest feature comes first
-
-    # If we only want to test the newest feature, create a list with only that feature method in it
-    if not test_all_features:
-        all_features = [all_features[len(all_features) - 1]]
-
-    for feature in all_features:
-        print("---------------------------------------------------------")
-        print("Training on", len(training), "samples, using", feature[0], " on algorithm", algorithm)
-        model = ConsecutiveNPChunker(feature[1], training, algorithm=algorithm)
-
-        print("Evaluating on", len(testing),"samples...")
-        score = Em.evaluate_model(model, testing, raw=True)
-        #print(em.evaluate_model(model, testing, raw=True))
-
-        print(score)
-        average = weighted_average(score)  # Calculate the weighted average score
-
-        # If we are doing better...
-        if average > best:
-            Bm.pickle_model(model, best=True)  # Pickle the model!
-            print("Current model is the best one yet!")
-            best = average  # Update our 'old' best with our current best
-
-        # Otherwise, just pickle the model
-        else:
-            Bm.pickle_model(model)
-
-
-def print_score(score, previous):
-
-    # Check if our score is a float or an int, and our previous is as well
-    if isinstance(score, float) or isinstance(score, int) and isinstance(score, previous):
-        if score > previous:
-            print("Score:", round(score, 3), "(+)")
-        else:
-            print(1)
-    elif isinstance(score, nltk.chunk.util.ChunkScore):
-        print(
-            "Accuracy:", round(score.accuracy(), 3),
-            "Precision:", round(score.precision(), 3),
-            "Recall:", round(score.recall(), 3),
-            "F-Measure", round(score.f_measure(), 3)
-        )
-
-
-def weighted_average(score, weights=(1, 1, 1, 1)):
-    """Calculate score using weighted average.
-
-    Keyword arguments:
-    score -- The score of type nltk.chunck.util.ChunckScore on which to compute the average. (Required)
-    weights -- The weights associated with each of the 4 performance metrics. (Optional, default = (1, 1, 1, 1))
-
-    This method is not meant to be called directly. This is a helper function to the main() function.
-    """
-    average = weights[0] * score.accuracy()
-    average += weights[1] * score.precision()
-    average += weights[2] * score.recall()
-    average += weights[3] * score.f_measure()
-    return average/sum(weights)
 
 def parse_input():
     """Reads the commandline input arguments and uses it's contents to call the main method.
@@ -151,6 +82,7 @@ def parse_input():
                       "We will use the full train sample set instead.")
                 tss = 0
 
+        # If the user wants to test all features after on another
         elif flag == "-taf" or flag == "-test_all_features":
             taf = True
 
