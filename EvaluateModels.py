@@ -1,6 +1,7 @@
-from os import listdir
+import os
 from pickle import load
 from nltk.corpus import conll2002 as conll
+import sys
 import time
 
 
@@ -23,17 +24,44 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     print(score.missed())
 
 def evaluate_pickle(path):
-    """ Helper function to unpickle a model to evaluate, given a path to the pickled model """
+    """ Unpickle a model to evaluate, given a path to the pickled model
+
+    Keyword arguments:
+    path -- The absolute or relative path to the pickled model. (Required)
+    """
+
     with open(path, "rb") as file:
         model = load(file)
         evaluate_model(model)
 
 
 def evaluate_all_pickles(path="./pickles"):
-    """" Helper function to evaluate all pickled models in a folder, given the path to that folder"""
-    for file in listdir(path):
-        if file.endswith(".pickle"):
-            evaluate_pickle(path + "/" + file)
+    """" Evaluate all pickled models in a folder, given the path to that folder.
+    This function is called when using the module as the main module.
+
+    Keyword arguments:
+    path -- The absolute or relative to the folder containing the pickled models. (Default: "./pickles")
+    """
+
+    # Check if the specified path exists at all
+    if os.path.exists(path):
+
+        # Collect all pickle files
+        files = [x for x in os.listdir(path=path) if x.endswith(".pickle")]
+
+        # If there are no pickle files in the specified folder, raise an error
+        if len(files) == 0:
+            raise ValueError("No pickled files found in the specified folder. Please try another path.")
+        else:
+            # Unpickle all pickled files
+            print("Found", len(files), "pickled models.")
+            for file in files:
+                if file.endswith(".pickle"):
+                    evaluate_pickle(path + "/" + file)
+
+    # If not, raise an error
+    else:
+        raise ValueError("The path " + path + " does not exist.")
 
 
 def evaluated_models(models):
@@ -43,3 +71,22 @@ def evaluated_models(models):
         print()
         print("-------------------START EVALUATION----------------------")
         evaluate_model(model)
+
+
+if __name__ == "__main__":
+
+    # If the user did not specify any command line arguments
+    if len(sys.argv) <= 1:
+        raise ValueError("Argument -path and a correct path are required")
+
+    # If the user wants to specify a path
+    elif sys.argv[1] == "-p" or sys.argv[1] == "-path":
+
+        # Try to get the path from the command line
+        try:
+            path = sys.argv[2]
+        except IndexError:
+            raise IndexError("Please specify a path after using the", sys.argv[1], "flag")
+
+        # Evaluate all pickles next
+        evaluate_all_pickles(path=path)

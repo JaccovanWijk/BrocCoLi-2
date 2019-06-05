@@ -1,8 +1,11 @@
 import re
+
+
 def feature1_simple(sentence, i, history):
     """Simplest chunker features: Just the POS tag of the word"""
     word, pos = sentence[i]
-    return { "pos": pos }
+    return {"pos": pos}
+
 
 def feature2_prevpos(sentence, i, history):
     """POS tag of previous word"""
@@ -14,6 +17,7 @@ def feature2_prevpos(sentence, i, history):
         posdict["prev-pos"] = None
     return posdict
 
+
 def feature3_nextpos(sentence, i, history):
     """POS tag of next word"""
     posdict = feature2_prevpos(sentence, i, history)
@@ -24,6 +28,7 @@ def feature3_nextpos(sentence, i, history):
         posdict["next-pos"] = None
     return posdict
 
+
 def feature4_cap(sentence, i, history):
     """Looks if the current word begins with a capital letter"""
     posdict = feature3_nextpos(sentence, i, history)
@@ -32,6 +37,7 @@ def feature4_cap(sentence, i, history):
     else:
         posdict["cap"] = False
     return posdict
+
 
 def feature5_nextcap(sentence, i, history):
     """Looks if the next word begins with a capital letter"""
@@ -47,8 +53,9 @@ def feature5_nextcap(sentence, i, history):
         posdict["next-cap"] = False
     return posdict
 
-def feature6_word(sentence, i, history):
-    """Makes the word itself a feature"""
-    posdict = feature5_nextcap(sentence, i, history)
-    posdict["word"] = sentence[i][0]
-    return posdict
+
+#def feature6_word(sentence, i, history):
+#    """Makes the word itself a feature"""
+#    posdict = feature5_nextcap(sentence, i, history)
+#    posdict["word"] = sentence[i][0]
+#    return posdict
