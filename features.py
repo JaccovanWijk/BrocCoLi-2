@@ -66,3 +66,4 @@ def feature7_numcaps(sentence, i, history):
     all_caps = [x for x in word if x.isupper()]
     posdict = feature6_word(sentence, i, history)
     posdict['num-caps'] = len(all_caps)
+    return posdict
