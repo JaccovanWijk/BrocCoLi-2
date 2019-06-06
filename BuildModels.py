@@ -71,7 +71,7 @@ def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, t
         # Inform the user on the elapsed and end times
         end_time = time.time()
         elapsed = end_time - start_time
-        print("Training end time:", time.asctime(time.localtime(elapsed)), "(Elapsed:", round(elapsed, 2), ")")
+        print("Training end time:", time.asctime(time.localtime(end_time)), "(Elapsed:", round(elapsed, 2), ")")
 
         pickle_model(model=model, folder=folder)
 
