@@ -67,12 +67,13 @@ def evaluate_all_pickles(path="./pickles"):
 
 
 def evaluated_models(models):
-    """Convenience function to evaluated multiple models"""
+    """Convenience function to evaluate multiple models"""
 
+    print()
+    print("-------------------START EVALUATION----------------------")
     for model in models:
-        print()
-        print("-------------------START EVALUATION----------------------")
         evaluate_model(model)
+        print("-------------------------------------------------------")
 
 
 if __name__ == "__main__":
