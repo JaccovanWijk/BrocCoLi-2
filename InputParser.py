@@ -28,11 +28,11 @@ def parse_input():
 
             # Throw an exception if the user does not specify an admissible algorithm
             if args['alg'].lower() not in ["iis", "gis", "nb", "naivebayes"]:
-                raise ValueError(alg + " is not a valid algorithm.")
+                raise ValueError(args['alg'] + " is not a valid algorithm.")
 
             # If the user is lazy and doesn't want to type NaiveBayes fully
             elif args['alg'].lower() == "nb":
-                alg = "NaiveBayes"
+                args['alg'] = "NaiveBayes"
 
         # If the user wants to specify the train sample size
         elif flag == "-tss" or flag == "-train_sample_size":

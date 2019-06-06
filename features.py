@@ -9,61 +9,73 @@ def feature1_simple(sentence, i, history):
 
 def feature2_prevpos(sentence, i, history):
     """POS tag of previous word"""
-    posdict = feature1_simple(sentence, i, history)
+    features = feature1_simple(sentence, i, history)
     if i > 0:
         word, pos = sentence[i - 1]
-        posdict["prev-pos"] = pos
+        features["prev-pos"] = pos
     else:
-        posdict["prev-pos"] = None
-    return posdict
+        features["prev-pos"] = None
+    return features
 
 
 def feature3_nextpos(sentence, i, history):
     """POS tag of next word"""
-    posdict = feature2_prevpos(sentence, i, history)
+    features = feature2_prevpos(sentence, i, history)
     if i < len(sentence) - 1:
         word, pos = sentence[i + 1]
-        posdict["next-pos"] = pos
+        features["next-pos"] = pos
     else:
-        posdict["next-pos"] = None
-    return posdict
+        features["next-pos"] = None
+    return features
 
 
 def feature4_cap(sentence, i, history):
     """Looks if the current word begins with a capital letter"""
-    posdict = feature3_nextpos(sentence, i, history)
+    features = feature3_nextpos(sentence, i, history)
     if sentence[i][0][0].isupper():
-        posdict["cap"] = True
+        features["cap"] = True
     else:
-        posdict["cap"] = False
-    return posdict
+        features["cap"] = False
+    return features
 
 
 def feature5_nextcap(sentence, i, history):
     """Looks if the next word begins with a capital letter"""
-    posdict = feature4_cap(sentence, i, history)
+    features = feature4_cap(sentence, i, history)
 
     if i < len(sentence) - 1:
         word, pos = sentence[i+1]
         if word[0].isupper():
-            posdict["next-cap"] = True
+            features["next-cap"] = True
         else:
-           posdict["next-cap"] = False
+           features["next-cap"] = False
     else:
-        posdict["next-cap"] = False
-    return posdict
+        features["next-cap"] = False
+    return features
 
 
 def feature6_word(sentence, i, history):
     """Makes the word itself a feature"""
-    posdict = feature5_nextcap(sentence, i, history)
-    posdict["word"] = sentence[i][0]
-    return posdict
+    features = feature5_nextcap(sentence, i, history)
+    features["word"] = sentence[i][0]
+    return features
+
 
 def feature7_numcaps(sentence, i, history):
     """How many capital letters the word has"""
     word, pos = sentence[i]
     all_caps = [x for x in word if x.isupper()]
-    posdict = feature6_word(sentence, i, history)
-    posdict['num-caps'] = len(all_caps)
-    return posdict
+    features = feature6_word(sentence, i, history)
+    features['num-caps'] = len(all_caps)
+    return features
+
+
+def feature8_prev_iob(sentence, i, history):
+    """If the previous word was already part of a NE"""
+    features = feature7_numcaps(sentence, i, history)
+    if i > 0 and len(history) > 1:
+        features['prev-IOB'] = history[i - 1]
+    else:
+        features['prev-IOB'] = 'O'
+        
+    return features

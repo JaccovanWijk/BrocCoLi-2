@@ -21,7 +21,7 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     elapsed = end_time - start_time
     print("End time:", time.asctime(time.localtime(elapsed)), "(Elapsed:", round(elapsed, 2), ")")
 
-    print(score.missed())
+    #print(score.missed())
 
 
 def evaluate_pickle(path):
