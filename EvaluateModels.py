@@ -10,7 +10,7 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
 
     # Inform the user when the evaluation has started
     start_time = time.time()
-    print("Evaluating on", len(testdata), "samples. Start time: ", start_time)
+    print("Evaluating on", len(testdata), "samples. Start time: ", time.asctime(time.localtime(start_time)))
 
     # Evaluate the model and print the score
     score = model.evaluate(testdata)
