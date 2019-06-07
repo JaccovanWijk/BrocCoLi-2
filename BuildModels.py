@@ -30,7 +30,7 @@ def pickle_model(model, folder="pickles"):
         dump(model, pickle)
 
 
-def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, taf=False, folder="pickles"):
+def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickles"):
     """"Train a NER-tagger model and pickle them afterwards. Returns all models in a list
 
     Keyword arguments:
@@ -41,42 +41,34 @@ def train_model(alg="IIS", train_data=conll.chunked_sents("ned.train"), tss=0, t
     folder -- Which folder to save the pickled model(s) in (Default = "pickles")
     """
 
-    # Save all models in a list, if the user wants to evaluate without needing to unpickle
-    models = []
-
-    # Resize the testing size if necessary
-    if 0 < tss < len(train_data):
-        train_data = conll.chunked_sents("ned.train")[:tss]
-
-    all_features = getmembers(features, isfunction)  # Get all feature functions from module features
-    all_features = sorted(all_features, key=lambda y: y[0])  # Sort them by name so the oldest feature comes first
-
-    # If we only want to test the newest feature, create a list with only that feature method in it
-    if not taf:
-        all_features = [all_features[len(all_features) - 1]]
-
     print()
     print("--------------------START TRAINING-----------------------")
 
-    # Loop trough all features we want to check
-    for feature_name, feature_function in all_features:
+    # Save all models in a list, if the user wants to evaluate without needing to unpickle
+    models = []
 
-        # Train the model and inform the user on start time
-        print("Training on", len(train_data), "samples, using", feature_name, " on algorithm", alg)
-        start_time = time.time()
-        print("Training start time:", time.asctime(time.localtime(start_time)))
-        model = ConsecutiveNPChunker(feature_function, train_data, algorithm=alg)
-        models.append(model)
+    # Read all info of feature from the tuple
+    feature_name = feature[0]
+    feature_function = feature[1]
 
-        # Inform the user on the elapsed and end times
-        end_time = time.time()
-        elapsed = end_time - start_time
-        print("Training end time:", time.asctime(time.localtime(end_time)), "(Elapsed:", round(elapsed, 2), ")")
+    # Train the model and inform the user on start time
+    print("Training on", len(train_data), "samples, using",
+          feature_name, " on algorithm", alg)
+    start_time = time.time()
+    print("Training start time:", time.asctime(time.localtime(start_time)))
+    model = ConsecutiveNPChunker(feature_function,
+                                 train_data, algorithm=alg)
+    models.append(model)
 
-        pickle_model(model=model, folder=folder)
+    # Inform the user on the elapsed and end times
+    end_time = time.time()
+    elapsed = end_time - start_time
+    print("Training end time:", time.asctime(time.localtime(end_time)),
+          "(Elapsed:", round(elapsed, 2), ")")
 
-    return models
+    pickle_model(model=model, folder=folder)
 
+    return model
 
 if __name__ == "__main__":
 

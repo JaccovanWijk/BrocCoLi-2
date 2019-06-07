@@ -77,11 +77,11 @@ def feature8_prev_iob(sentence, i, history):
         features['prev-IOB'] = history[i - 1]
     else:
         features['prev-IOB'] = 'O'
-        
+
     return features
 
 
-def feature9_all_caps(sentence, i, history):
+def feature99_all_caps(sentence, i, history):
     """If the word is written in all caps"""
     word, pos = sentence[i]
     features = feature8_prev_iob(sentence, i, history)
@@ -92,7 +92,7 @@ def feature9_all_caps(sentence, i, history):
     return features
 
 
-def feature10_prev_cap(sentence, i, history):
+def feature9_prev_cap(sentence, i, history):
     """If the previous word starts with a capital letter"""
     features = feature9_all_caps(sentence, i, history)
     if not i == 0 and len(sentence) > 1:
