@@ -94,7 +94,7 @@ def feature99_all_caps(sentence, i, history):
 
 def feature9_prev_cap(sentence, i, history):
     """If the previous word starts with a capital letter"""
-    features = feature9_all_caps(sentence, i, history)
+    features = feature99_all_caps(sentence, i, history)
     if not i == 0 and len(sentence) > 1:
         word, pos = sentence[i - 1]
         if word[0].isupper():
