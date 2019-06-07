@@ -8,6 +8,8 @@ import time
 def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     """ Evaluate a given model on test data and print the results """
 
+    print("-------------------START EVALUATING----------------------")
+
     # Inform the user when the evaluation has started
     start_time = time.time()
     print("Evaluating on", len(testdata), "samples. Start time: ", time.asctime(time.localtime(start_time)))
