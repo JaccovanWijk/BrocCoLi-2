@@ -39,7 +39,7 @@ def main(algorithm="IIS", train_sample_size=0, test_all_features=False):
 
     # Resize the testing size if necessary
     if 0 < train_sample_size < len(train_data):
-        train_data = conll.chunked_sents("ned.train")[:tss]
+        train_data = conll.chunked_sents("ned.train")[:train_sample_size]
 
     all_features = getmembers(features, isfunction)  # Get all feature functions from module features
     all_features = sorted(all_features, key=lambda y: y[0], reverse = True)  # Sort them by name so the oldest feature comes first

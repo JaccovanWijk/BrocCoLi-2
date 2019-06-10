@@ -70,6 +70,7 @@ def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickle
 
     return model
 
+
 if __name__ == "__main__":
 
     if sys.argv[1] == "-h" or sys.argv[1] == "-help":
