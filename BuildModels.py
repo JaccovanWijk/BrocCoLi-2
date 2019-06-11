@@ -44,9 +44,6 @@ def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickle
     print()
     print("--------------------START TRAINING-----------------------")
 
-    # Save all models in a list, if the user wants to evaluate without needing to unpickle
-    models = []
-
     # Read all info of feature from the tuple
     feature_name = feature[0]
     feature_function = feature[1]
@@ -58,7 +55,6 @@ def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickle
     print("Training start time:", start_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3])
     model = ConsecutiveNPChunker(feature_function,
                                  train_data, algorithm=alg)
-    models.append(model)
 
     # Inform the user on the elapsed and end times
     end_time = dt.now()
