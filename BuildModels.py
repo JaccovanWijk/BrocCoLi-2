@@ -55,7 +55,7 @@ def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickle
     print("Training on", len(train_data), "samples, using",
           feature_name, " on algorithm", alg)
     start_time = dt.now()
-    print("Training start time:", start_time.strftime('%d-%m-%Y %H:%M:%S.%f'))
+    print("Training start time:", start_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3])
     model = ConsecutiveNPChunker(feature_function,
                                  train_data, algorithm=alg)
     models.append(model)
@@ -63,7 +63,7 @@ def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickle
     # Inform the user on the elapsed and end times
     end_time = dt.now()
     elapsed = end_time - start_time
-    print("Training end time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f'), "(Elapsed:", elapsed, ")")
+    print("Training end time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3], "(Elapsed:", str(elapsed)[:-3] + ")")
 
     pickle_model(model=model, folder=folder)
 

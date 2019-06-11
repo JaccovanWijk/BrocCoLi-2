@@ -8,11 +8,12 @@ from datetime import datetime as dt
 def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     """ Evaluate a given model on test data and print the results """
 
+    print()
     print("-------------------START EVALUATING----------------------")
 
     # Inform the user when the evaluation has started
     start_time = dt.now()
-    print("Evaluating on", len(testdata), "samples. Start time: ", start_time.strftime('%d-%m-%Y %H:%M:%S.%f'))
+    print("Evaluating on", len(testdata), "samples. Start time: ", start_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3])
 
     # Evaluate the model and print the score
     score = model.evaluate(testdata)
@@ -21,7 +22,7 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     # Inform the user of the elapsed and time times
     end_time = dt.now()
     elapsed = end_time - start_time
-    print("End time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f') , "(Elapsed:", elapsed, ")")
+    print("End time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3] , "(Elapsed:", str(elapsed)[:-3] + ")")
 
     #print(score.missed())
 
