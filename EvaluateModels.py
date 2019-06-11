@@ -28,11 +28,11 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     # Write the results to the file
     with open("Evaluation-output.txt", 'a') as file:
         file.write(start_time_formatted + ";" +
-                   model._algorithm + ";" +
-                   score.accuracy() + ";" +
-                   score.precision() + ";" +
-                   score.recall() + ";" +
-                   score.f_measure() + "/n")
+                   str(model._algorithm) + ";" +
+                   str(score.accuracy()) + ";" +
+                   str(score.precision()) + ";" +
+                   str(score.recall()) + ";" +
+                   str(score.f_measure()) + "/n")
 
 
     # Inform the user of the elapsed and time times
