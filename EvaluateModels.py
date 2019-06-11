@@ -29,7 +29,7 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     with open("Evaluation-output.txt", 'a') as file:
         file.write(start_time_formatted + ";" +
                    str(model._algorithm) + ";" +
-                   str(model._featuremap) + ";" +
+                   str(model.tagger._featuremap) + ";" +
                    str(score.accuracy()) + ";" +
                    str(score.precision()) + ";" +
                    str(score.recall()) + ";" +
