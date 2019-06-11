@@ -23,12 +23,13 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     # Create the Evaluation-output.txt file if it does not exist
     if not os.path.exists("Evaluation-output.txt"):
         with open("Evaluation-output.txt", 'w') as file:
-            file.write("Datetime;Algorithm;Accuracy;Precision;Recall;F_Measure \n")
+            file.write("Datetime;Algorithm;Feature_set;Accuracy;Precision;Recall;F_Measure \n")
 
     # Write the results to the file
     with open("Evaluation-output.txt", 'a') as file:
         file.write(start_time_formatted + ";" +
                    str(model._algorithm) + ";" +
+                   str(model._featuremap) + ";" +
                    str(score.accuracy()) + ";" +
                    str(score.precision()) + ";" +
                    str(score.recall()) + ";" +
