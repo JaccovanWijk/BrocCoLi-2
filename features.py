@@ -80,27 +80,12 @@ def feature08_prev_iob(sentence, i, history):
 
     return features
 
-
-def feature09_all_caps(sentence, i, history):
-    """If the word is written in all caps"""
-    word, pos = sentence[i]
+def feature09_next_verb(sentence, i, history):
+    """If the next word is a verb"""
     features = feature08_prev_iob(sentence, i, history)
-    if word.isupper():
-        features['all-caps'] = True
+    if i < len(sentence) - 1:
+        word, pos = sentence[i + 1]
+        features["next-verb"] = (pos == "V")
     else:
-        features['all-caps'] = False
-    return features
-
-
-def feature10_prev_cap(sentence, i, history):
-    """If the previous word starts with a capital letter"""
-    features = feature09_all_caps(sentence, i, history)
-    if not i == 0 and len(sentence) > 1:
-        word, pos = sentence[i - 1]
-        if word[0].isupper():
-            features['prev-cap'] = True
-        else:
-            features['prev-cap'] = False
-    else:
-        features['prev-cap'] = False
+        features["next-verb"] = False
     return features
