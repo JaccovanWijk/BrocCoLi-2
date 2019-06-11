@@ -2,7 +2,7 @@ from pickle import dump
 from nltk.corpus import conll2002 as conll
 import features
 from inspect import getmembers, isfunction
-import time
+from datetime import datetime as dt
 import os
 import sys
 from custom_chunker import ConsecutiveNPChunker
@@ -54,17 +54,16 @@ def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickle
     # Train the model and inform the user on start time
     print("Training on", len(train_data), "samples, using",
           feature_name, " on algorithm", alg)
-    start_time = time.time()
-    print("Training start time:", time.asctime(time.localtime(start_time)))
+    start_time = dt.now()
+    print("Training start time:", start_time.strftime('%d-%m-%Y %H:%M:%S.%f'))
     model = ConsecutiveNPChunker(feature_function,
                                  train_data, algorithm=alg)
     models.append(model)
 
     # Inform the user on the elapsed and end times
-    end_time = time.time()
+    end_time = dt.now()
     elapsed = end_time - start_time
-    print("Training end time:", time.asctime(time.localtime(end_time)),
-          "(Elapsed:", round(elapsed, 2), ")")
+    print("Training end time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f'), "(Elapsed:", elapsed, ")")
 
     pickle_model(model=model, folder=folder)
 

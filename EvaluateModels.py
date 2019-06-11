@@ -2,7 +2,7 @@ import os
 from pickle import load
 from nltk.corpus import conll2002 as conll
 import sys
-import time
+from datetime import datetime as dt
 
 
 def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
@@ -11,17 +11,17 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
     print("-------------------START EVALUATING----------------------")
 
     # Inform the user when the evaluation has started
-    start_time = time.time()
-    print("Evaluating on", len(testdata), "samples. Start time: ", time.asctime(time.localtime(start_time)))
+    start_time = dt.now()
+    print("Evaluating on", len(testdata), "samples. Start time: ", start_time.strftime('%d-%m-%Y %H:%M:%S.%f'))
 
     # Evaluate the model and print the score
     score = model.evaluate(testdata)
     print(score)
 
     # Inform the user of the elapsed and time times
-    end_time = time.time()
+    end_time = dt.now()
     elapsed = end_time - start_time
-    print("End time:", time.asctime(time.localtime(elapsed)), "(Elapsed:", round(elapsed, 2), ")")
+    print("End time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f') , "(Elapsed:", elapsed, ")")
 
     #print(score.missed())
 
