@@ -13,11 +13,27 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
 
     # Inform the user when the evaluation has started
     start_time = dt.now()
-    print("Evaluating on", len(testdata), "samples. Start time: ", start_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3])
+    start_time_formatted = start_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3]
+    print("Evaluating on", len(testdata), "samples. Start time: ", start_time_formatted)
 
     # Evaluate the model and print the score
     score = model.evaluate(testdata)
     print(score)
+
+    # Create the Evaluation-output.txt file if it does not exist
+    if not os.path.exists("Evaluation-output.txt"):
+        with open("Evaluation-output.txt", 'w') as file:
+            file.write("Datetime;Algorithm;Accuracy;Precision;Recall;F_Measure")
+
+    # Write the results to the file
+    with open("Evaluation-output.txt", 'a') as file:
+        file.write(start_time_formatted + ";" +
+                   model._algorithm + ";" +
+                   score.accuracy() + ";" +
+                   score.precision() + ";" +
+                   score.recall() + ";" +
+                   score.f_measure() + "/n")
+
 
     # Inform the user of the elapsed and time times
     end_time = dt.now()
