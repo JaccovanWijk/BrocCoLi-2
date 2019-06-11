@@ -79,14 +79,13 @@ class _ConsecutiveNPChunkTagger(nltk.TaggerI):
             history = []
             for i, (word, tag) in enumerate(tagged_sent):
                 featureset = self._featuremap(untagged_sent, i, history)
-                train_set.append( (featureset, tag) )
+                train_set.append((featureset, tag))
                 history.append(tag)
 
         if algorithm == "NaiveBayes":
             self.classifier = nltk.NaiveBayesClassifier.train(train_set)
         else:
-            self.classifier = nltk.MaxentClassifier.train(
-            train_set, algorithm=algorithm, trace=0)
+            self.classifier = nltk.MaxentClassifier.train(train_set, algorithm=algorithm, trace=0)
 
     def tag(self, sentence):
         history = []

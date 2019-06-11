@@ -60,7 +60,8 @@ def evaluate_all_pickles(path="./pickles"):
         else:
             # Unpickle all pickled files
             print("Found", len(files), "pickled models.")
-            for file in files:
+            for i, file in enumerate(files):
+                print("Going to evaluate file:", file, "(" + str(i) + "/" + str(len(files)) + ")")
                 if file.endswith(".pickle"):
                     evaluate_pickle(path + "/" + file)
 
