@@ -1,37 +1,32 @@
 import re
 
 
-def feature01_simple(sentence, i, history):
-    """Simplest chunker features: Just the POS tag of the word"""
+def feature01_pos(sentence, i, history):
+    """Pos tag of current, previous and next word"""
     word, pos = sentence[i]
-    return {"pos": pos}
 
+    # current pos
+    features = {"pos": pos}
 
-def feature02_prevpos(sentence, i, history):
-    """POS tag of previous word"""
-    features = feature01_simple(sentence, i, history)
+    # prev pos
     if i > 0:
         word, pos = sentence[i - 1]
         features["prev-pos"] = pos
     else:
         features["prev-pos"] = None
-    return features
 
-
-def feature03_nextpos(sentence, i, history):
-    """POS tag of next word"""
-    features = feature02_prevpos(sentence, i, history)
+    # next pos
     if i < len(sentence) - 1:
         word, pos = sentence[i + 1]
         features["next-pos"] = pos
     else:
         features["next-pos"] = None
+
     return features
 
-
-def feature04_cap(sentence, i, history):
+def feature02_cap(sentence, i, history):
     """Looks if the current word begins with a capital letter"""
-    features = feature03_nextpos(sentence, i, history)
+    features = feature01_pos(sentence, i, history)
     if sentence[i][0][0].isupper():
         features["cap"] = True
     else:
@@ -39,9 +34,9 @@ def feature04_cap(sentence, i, history):
     return features
 
 
-def feature05_nextcap(sentence, i, history):
+def feature03_nextcap(sentence, i, history):
     """Looks if the next word begins with a capital letter"""
-    features = feature04_cap(sentence, i, history)
+    features = feature02_cap(sentence, i, history)
 
     if i < len(sentence) - 1:
         word, pos = sentence[i+1]
@@ -54,25 +49,25 @@ def feature05_nextcap(sentence, i, history):
     return features
 
 
-def feature06_word(sentence, i, history):
+def feature04_word(sentence, i, history):
     """Makes the word itself a feature"""
-    features = feature05_nextcap(sentence, i, history)
+    features = feature03_nextcap(sentence, i, history)
     features["word"] = sentence[i][0]
     return features
 
 
-def feature07_numcaps(sentence, i, history):
+def feature05_numcaps(sentence, i, history):
     """How many capital letters the word has"""
     word, pos = sentence[i]
     all_caps = [x for x in word if x.isupper()]
-    features = feature06_word(sentence, i, history)
+    features = feature04_word(sentence, i, history)
     features['num-caps'] = len(all_caps)
     return features
 
 
-def feature08_prev_iob(sentence, i, history):
+def feature06_prev_iob(sentence, i, history):
     """If the previous word was already part of a NE"""
-    features = feature07_numcaps(sentence, i, history)
+    features = feature05_numcaps(sentence, i, history)
     if i > 0 and len(history) > 1:
         features['prev-IOB'] = history[i - 1]
     else:
@@ -80,12 +75,24 @@ def feature08_prev_iob(sentence, i, history):
 
     return features
 
-def feature09_next_verb(sentence, i, history):
+def feature07_next_verb(sentence, i, history):
     """If the next word is a verb"""
-    features = feature08_prev_iob(sentence, i, history)
+    features = feature06_prev_iob(sentence, i, history)
     if i < len(sentence) - 1:
         word, pos = sentence[i + 1]
         features["next-verb"] = (pos == "V")
     else:
         features["next-verb"] = False
+    return features
+
+def feature08_length(sentence, i, history):
+    """Length of word"""
+    features = feature07_next_verb(sentence, i, history)
+    features["length"] = len(sentence[i])
+    return features
+
+def feature09_cap_in_sentence(sentence, i, history):
+    """Amount of caps in sentence"""
+    features = feature08_length(sentence, i, history)
+    features["caps"] = len(sentence)
     return features
