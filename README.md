@@ -27,7 +27,7 @@ It will create an pre-configured NER-tagger and chuncker.
 
 ### EvaluateModels.py
 This module is used to evaluated trained NER-taggers. Just like `BuildModels.py`, it will provide the user with information during 
-execution about the times. This module can handle NER-tagger objects directly and pickled models. Present in this module is the `evaluate_all_pickles'
+execution about the times. This module can handle NER-tagger objects directly and pickled models. Present in this module is the `evaluate_all_pickles`
 function which will evaluate all pickled models in a given folder. 
 
 ### features.py
