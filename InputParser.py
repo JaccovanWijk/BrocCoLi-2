@@ -10,7 +10,8 @@ def parse_input():
     This module cannot be run as a main module.
     """
 
-    all_features = getmembers(features, isfunction)  # Get all feature functions from module features
+    # Get all feature functions from module features
+    all_features = [x for x in getmembers(features, isfunction) if 'feature' in x[0]]
     # Sort them by name so the oldest feature comes first
     all_features = sorted(all_features, key=lambda y: y[0], reverse=True)
     sorted_features = sorted(all_features, key=lambda y: y[0])
