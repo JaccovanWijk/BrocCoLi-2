@@ -105,9 +105,10 @@ def feature08_prev_cap(sentence, i, history):
 def h():
     """This module serves only to store all feature-functions and to list all available features. """
 
-    print("All the available function in features are:")
-    for name, _ in getmembers(sys.modules[__name__]):
-        if name != 'h':
+    print("All the available features are:")
+    features = [feature for feature in getmembers(sys.modules[__name__]) if isfunction(feature[1])]
+    for name, _ in features:
+        if 'feature' in name:
             print(name)
 
     return
