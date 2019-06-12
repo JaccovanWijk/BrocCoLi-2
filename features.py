@@ -1,6 +1,3 @@
-import re
-
-
 def feature01_pos(sentence, i, history):
     """Pos tag of current, previous and next word"""
     word, pos = sentence[i]
