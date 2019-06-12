@@ -1,12 +1,12 @@
 from pickle import dump
-from nltk.corpus import conll2002 as conll
-import features
-from inspect import getmembers, isfunction
 from datetime import datetime as dt
 import os
 import sys
+import features
+from nltk.corpus import conll2002 as conll
 from custom_chunker import ConsecutiveNPChunker
 from InputParser import parse_input
+from inspect import getmembers, isfunction
 
 
 def pickle_model(model, folder="pickles"):
@@ -30,14 +30,15 @@ def pickle_model(model, folder="pickles"):
         dump(model, pickle)
 
 
-def train_model(feature, train_data, alg="IIS", tss=0, taf=False, folder="pickles"):
-    """"Train a NER-tagger model and pickle them afterwards. Returns all models in a list
+def train_model(feature, train_data=conll.chunked_sents("ned.train"), alg="IIS", folder="pickles"):
+    """"Train a NER-tagger model and pickle it afterwards. Returns the trained model.
 
     Keyword arguments:
-    alg -- The algorithm to use during training (Default = "IIS")
-    train_data -- The data set to train the model with (Default = The ned.train data set from the nltk conll2002 corpus)
-    tss -- The train sample size to use (Default = 0, which means the whole data set)
-    taf -- Whether to train every feature (Default = False)
+
+    alg -- The name of the algorithm to use.
+    Must be one of ["IIS", "GIS", "NaiveBayes"] (Default = IIS).
+    The flag to set this can be -a , -alg or -algorithm in the command line
+
     folder -- Which folder to save the pickled model(s) in (Default = "pickles")
     """
 
@@ -73,4 +74,13 @@ if __name__ == "__main__":
 
     elif len(sys.argv) > 1:
         args = parse_input()
-        train_model(alg=args['alg'], tss=args['tss'], taf=args['taf'])
+
+        all_features = getmembers(features, isfunction)  # Get all feature functions from module features
+
+        # Sort them by name so the oldest feature comes first
+        all_features_sorted = sorted(all_features, key=lambda y: y[0], reverse=True)
+
+        print(all_features_sorted)
+        most_recent_feature = all_features_sorted[0]
+
+        train_model(alg=args['alg'], feature=all_features)

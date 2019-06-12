@@ -35,13 +35,10 @@ def evaluate_model(model, testdata=conll.chunked_sents("ned.testa")):
                    str(score.recall()) + ";" +
                    str(score.f_measure()) + "\n")
 
-
     # Inform the user of the elapsed and time times
     end_time = dt.now()
     elapsed = end_time - start_time
     print("End time:", end_time.strftime('%d-%m-%Y %H:%M:%S.%f')[:-3] , "(Elapsed:", str(elapsed)[:-3] + ")")
-
-    #print(score.missed())
 
 
 def evaluate_pickle(path):

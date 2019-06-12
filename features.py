@@ -1,3 +1,6 @@
+from inspect import getmembers, isfunction
+import sys
+
 def feature01_pos(sentence, i, history):
     """Pos tag of current, previous and next word"""
     word, pos = sentence[i]
@@ -20,6 +23,7 @@ def feature01_pos(sentence, i, history):
         features["next-pos"] = None
 
     return features
+
 
 def feature02_cap(sentence, i, history):
     """Looks if the current word begins with a capital letter"""
@@ -72,6 +76,7 @@ def feature06_prev_iob(sentence, i, history):
 
     return features
 
+
 def feature07_all_caps(sentence, i, history):
     """If the word is written in all caps"""
     word, pos = sentence[i]
@@ -95,3 +100,19 @@ def feature08_prev_cap(sentence, i, history):
     else:
         features['prev-cap'] = False
     return features
+
+
+def h():
+    """This module serves only to store all feature-functions and to list all available features. """
+
+    print("All the available function in features are:")
+    for name, _ in getmembers(sys.modules[__name__]):
+        if name != 'h':
+            print(name)
+
+    return
+
+
+if __name__ == '__main__':
+    help(h)
+    h()
